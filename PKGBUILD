@@ -1,25 +1,32 @@
 # Maintainer: nafets227 <nafets227@users.noreply.github.com>
 # Contributor: luelistan <archlinux-aur-git@max-weller.de>
 
-pkgname=dhtest
-pkgver=988afec50c596245947d8a478cf8f7112f5ca662
+pkgname=dhtest-git
+pkgver=r68.988afec
 pkgrel=1
 pkgdesc="A DHCP client simulation on linux"
 arch=("x86_64")
-depends=("glibc")
 url="https://github.com/saravana815/dhtest"
 license=('GPL2')
+depends=("glibc")
+makedepends=(git)
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("${pkgname%-git}::git+https://github.com/saravana815/dhtest.git")
+sha256sums=("SKIP")
 
-source=("https://github.com/saravana815/dhtest/archive/${pkgver}.tar.gz")
-sha256sums=("a9ac727d30ce86df62720f2b493779f44633c5ab67390f24caa043a86c4f4bae")
+pkgver() {
+  cd "$srcdir/${pkgname%-git}"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
 
 build() {
-  cd "$srcdir/$pkgname-$pkgver"
+  cd "$srcdir/${pkgname%-git}"
   make
 }
 
 package() {
-  cd "$srcdir/$pkgname-$pkgver"
+  cd "$srcdir/${pkgname%-git}"
   mkdir -p $pkgdir/usr/bin
   install dhtest $pkgdir/usr/bin/dhtest
 }
